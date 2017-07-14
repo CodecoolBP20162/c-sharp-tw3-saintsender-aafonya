@@ -19,6 +19,7 @@ namespace SaintSender
 {
     public partial class Form1 : Form
     {
+   
 
         public Form1()
         {
@@ -28,16 +29,27 @@ namespace SaintSender
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            CreateDialogForm();
             FillMyTreeView();
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
+        private void ReloadButton_Click(object sender, EventArgs e)
         {
-            SendEmailMIMEKIT.SendEmail();
+            FillMyTreeView();
         }
 
+        private void SendButtonClick(object sender, EventArgs e)
+        {
+            string address = SenderTextBox.Text;
+            string subject = SubjectTextBox.Text;
+            string body = BodyRichTextBox.Text;
+            SendEmailMIMEKIT.SendEmail(address, subject, body);
+            SenderTextBox.Text = null;
+            SubjectTextBox.Text = null;
+            BodyRichTextBox.Text = null;
+        }
+        
         private void button2_Click(object sender, EventArgs e)
         {
             string dogCsv = string.Join(@"\s", RetrieveEmails.ShowFolder().ToArray());
@@ -67,7 +79,7 @@ namespace SaintSender
                 // the XOAUTH2 authentication mechanism.
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                client.Authenticate("suhooooly", "Europesbiggestowl");
+                client.Authenticate(SendEmailMIMEKIT.selfUserName, SendEmailMIMEKIT.selfKeyWord);
 
                 // Get the first personal namespace and list the toplevel folders under it.
                 // Add a root TreeNode for each Folder object in the ArrayList.
@@ -103,8 +115,18 @@ namespace SaintSender
             //CreateEmailListingForm(folderName);
         }
 
+        private void OKDatebutton_Click(object sender, EventArgs e)
+        {
+            string searchedString = TextSearchTextBox.Text;
+            DataManager.emailList.Clear();
+            string folderName = treeView2.SelectedNode.Name;
+            RetrieveEmails.ShowEmailsByFolderByDate(folderName, searchedString);
+            CreateEmailListingForm(folderName);
+        }
+
         private void treeView2_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            DataManager.emailList.Clear();
             string folderName = treeView2.SelectedNode.Name;
             RetrieveEmails.ShowEmailsByFolder(folderName);
             CreateEmailListingForm(folderName);
@@ -189,86 +211,94 @@ namespace SaintSender
             }
         }
 
+
+
+
+
+
+        public void CreateDialogForm()
+        {
+            // Create a new instance of the form.
+            Form DialogForm = new Form();
+            // Create two buttons to use as the accept and cancel buttons.
+            Button OKButton = new Button();
+            Button CancelButton = new Button();
+
+            Label Address = new Label();
+            Address.Text = "Address";
+            Address.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            Address.Location = new Point(10, 10);
+            TextBox AddressTextBox = new TextBox();
+          
+            AddressTextBox.Location = new Point(10, 40);
+            Label Keyword = new Label();
+            Keyword.Text = "Password";
+            Keyword.Location = new Point(10, 70);
+            Keyword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            TextBox KeyWordTextBox = new TextBox();
+            KeyWordTextBox.Location = new Point(10, 100);
+
+            // Set the text of RenameButton.
+            OKButton.Text = "OK";
+            // Set the position of the button on the form.
+            OKButton.Location = new Point(10, 140);
+            // Set the text of CancelButton to "Cancel".
+            CancelButton.Text = "Cancel";
+            // Set the position of the button based on the location of button1.
+            CancelButton.Location
+               = new Point(OKButton.Left, OKButton.Height + OKButton.Top + 10);
+            // Make RenameButton's dialog result OK.
+            OKButton.DialogResult = DialogResult.OK;
+            // Make button2's dialog result Cancel.
+            CancelButton.DialogResult = DialogResult.Cancel;
+            // Set the caption bar text of the form.   
+            DialogForm.Text = "Rename Dialog Box";
+
+            // Define the border style of the form to a dialog box.
+            DialogForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+            // Set the accept button of the form to RenameButton.
+            DialogForm.AcceptButton = OKButton;
+            // Set the cancel button of the form to CancelButton.
+            DialogForm.CancelButton = CancelButton;
+            // Set the start position of the form to the center of the screen.
+            DialogForm.StartPosition = FormStartPosition.CenterScreen;
+
+            // Add RenameButton to the form.
+            DialogForm.Controls.Add(OKButton);
+            // Add CancelButton to the form.
+            DialogForm.Controls.Add(CancelButton);
+            DialogForm.Controls.Add(Address);
+            DialogForm.Controls.Add(AddressTextBox);
+            DialogForm.Controls.Add(Keyword);
+            DialogForm.Controls.Add(KeyWordTextBox);
+
+            // Display the form as a modal dialog box.
+            DialogForm.ShowDialog();
+
+            // Determine if the OK button was clicked on the dialog box.
+            if (DialogForm.DialogResult == DialogResult.OK)
+            {
+                SendEmailMIMEKIT.selfAddress = AddressTextBox.Text;
+                SendEmailMIMEKIT.selfKeyWord = KeyWordTextBox.Text;
+
+
+                for (int i = 0; i < SendEmailMIMEKIT.selfAddress.Length; i++)
+                {
+                    if (SendEmailMIMEKIT.selfAddress[i] == '@')
+                    {
+                        SendEmailMIMEKIT.selfUserName = SendEmailMIMEKIT.selfAddress.Substring(0, i);
+                        break;
+                    }
+                }
+                DialogForm.Dispose();
+            }
+            else
+            {
+                
+                DialogForm.Dispose();
+            }
+        }
+
         
-
-
-        //public void CreateDialogForm(FileInfo file)
-        //{
-        //    // Create a new instance of the form.
-        //    Form DialogForm = new Form();
-        //    // Create two buttons to use as the accept and cancel buttons.
-        //    Button RenameButton = new Button();
-        //    Button CancelButton = new Button();
-
-        //    Label OldFileNameLabel = new Label();
-        //    OldFileNameLabel.Text = "Old File Name";
-        //    OldFileNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-        //    OldFileNameLabel.Location = new Point(10, 10);
-        //    Label OldFileNameText = new Label();
-        //    OldFileNameText.Text = file.Name;
-        //    OldFileNameText.Location = new Point(10, 40);
-        //    Label NewFileNameLabel = new Label();
-        //    NewFileNameLabel.Text = "New File Name";
-        //    NewFileNameLabel.Location = new Point(10, 70);
-        //    NewFileNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-        //    TextBox NewFileNameTextBox = new TextBox();
-        //    NewFileNameTextBox.Location = new Point(10, 100);
-
-        //    // Set the text of RenameButton.
-        //    RenameButton.Text = "Rename";
-        //    // Set the position of the button on the form.
-        //    RenameButton.Location = new Point(10, 140);
-        //    // Set the text of CancelButton to "Cancel".
-        //    CancelButton.Text = "Cancel";
-        //    // Set the position of the button based on the location of button1.
-        //    CancelButton.Location
-        //       = new Point(RenameButton.Left, RenameButton.Height + RenameButton.Top + 10);
-        //    // Make RenameButton's dialog result OK.
-        //    RenameButton.DialogResult = DialogResult.OK;
-        //    // Make button2's dialog result Cancel.
-        //    CancelButton.DialogResult = DialogResult.Cancel;
-        //    // Set the caption bar text of the form.   
-        //    DialogForm.Text = "Rename Dialog Box";
-
-        //    // Define the border style of the form to a dialog box.
-        //    DialogForm.FormBorderStyle = FormBorderStyle.FixedDialog;
-        //    // Set the accept button of the form to RenameButton.
-        //    DialogForm.AcceptButton = RenameButton;
-        //    // Set the cancel button of the form to CancelButton.
-        //    DialogForm.CancelButton = CancelButton;
-        //    // Set the start position of the form to the center of the screen.
-        //    DialogForm.StartPosition = FormStartPosition.CenterScreen;
-
-        //    // Add RenameButton to the form.
-        //    DialogForm.Controls.Add(RenameButton);
-        //    // Add CancelButton to the form.
-        //    DialogForm.Controls.Add(CancelButton);
-        //    DialogForm.Controls.Add(OldFileNameLabel);
-        //    DialogForm.Controls.Add(OldFileNameText);
-        //    DialogForm.Controls.Add(NewFileNameLabel);
-        //    DialogForm.Controls.Add(NewFileNameTextBox);
-
-        //    // Display the form as a modal dialog box.
-        //    DialogForm.ShowDialog();
-
-        //    // Determine if the OK button was clicked on the dialog box.
-        //    if (DialogForm.DialogResult == DialogResult.OK)
-        //    {
-        //        Microsoft.VisualBasic.FileIO.FileSystem.RenameFile(file.FullName, NewFileNameTextBox.Text);
-        //        UpdateDirectoryInfos();
-        //        // Display a message box indicating that the OK button was clicked.
-        //        MessageBox.Show("The OK button on the form was clicked.");
-        //        // Optional: Call the Dispose method when you are finished with the dialog box.
-        //        DialogForm.Dispose();
-        //    }
-        //    else
-        //    {
-        //        // Display a message box indicating that the Cancel button was clicked.
-        //        MessageBox.Show("The Cancel button on the form was clicked.");
-        //        // Optional: Call the Dispose method when you are finished with the dialog box.
-        //        DialogForm.Dispose();
-        //    }
-        //}
-
     }
 }

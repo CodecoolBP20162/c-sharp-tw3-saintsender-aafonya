@@ -5,25 +5,38 @@ using System.Text;
 using System.Threading.Tasks;
 using MimeKit;
 using MailKit.Net.Smtp;
+using System.Windows.Forms;
 
 namespace SaintSender
 {
     class SendEmailMIMEKIT
     {
-        public static MimeMessage SendEmail()
+        public static string username;
+
+        public static string selfUserName;
+        public static string selfAddress;
+        public static string selfKeyWord;
+
+        public static MimeMessage SendEmail(string address, string subject, string body)
         {
+            
+            for (int i = 0; i < address.Length; i++)
+            {
+                if(address[i] == '@')
+                {
+                    username = address.Substring(0, i);
+                    break;
+                }
+            }
+
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("suhooooly", "suhoooooly@gmail.com"));
-            message.To.Add(new MailboxAddress("suhooooly", "suhooooly@gmail.com"));
-            message.Subject = "How you doin'?";
+            message.From.Add(new MailboxAddress(selfUserName, selfAddress));
+            message.To.Add(new MailboxAddress(username, address));
+            message.Subject = subject;
 
             message.Body = new TextPart("plain")
             {
-                Text = @"Hey Chandler,
-
-I just wanted to let you know that Monica and I were going to go play some paintball, you in?
-
--- Joey"
+                Text = body
             };
 
             using (var client = new SmtpClient())
@@ -38,9 +51,10 @@ I just wanted to let you know that Monica and I were going to go play some paint
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
 
                 // Note: only needed if the SMTP server requires authentication
-                client.Authenticate("suhooooly", "Europesbiggestowl");
+                client.Authenticate(selfUserName, selfKeyWord);
 
                 client.Send(message);
+                MessageBox.Show("Email Send");
                 client.Disconnect(true);
             }
 

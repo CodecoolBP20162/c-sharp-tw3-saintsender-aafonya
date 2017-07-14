@@ -33,6 +33,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.treeView2 = new System.Windows.Forms.TreeView();
             this.EmailGroupBox = new System.Windows.Forms.GroupBox();
+            this.BodyRichTextBox = new System.Windows.Forms.RichTextBox();
             this.SubjectTextBox = new System.Windows.Forms.TextBox();
             this.SenderTextBox = new System.Windows.Forms.TextBox();
             this.BodyLabel = new System.Windows.Forms.Label();
@@ -44,7 +45,8 @@
             this.EmailSearchDateGroupBox = new System.Windows.Forms.GroupBox();
             this.DateSearchTextBox = new System.Windows.Forms.TextBox();
             this.DateLabel = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.ReloadButton = new System.Windows.Forms.Button();
+            this.OKDatebutton = new System.Windows.Forms.Button();
             this.EmailGroupBox.SuspendLayout();
             this.EmailSearchGroupBox.SuspendLayout();
             this.EmailSearchDateGroupBox.SuspendLayout();
@@ -58,7 +60,7 @@
             this.SendButton.TabIndex = 0;
             this.SendButton.Text = "Send";
             this.SendButton.UseVisualStyleBackColor = true;
-            this.SendButton.Click += new System.EventHandler(this.button1_Click);
+            this.SendButton.Click += new System.EventHandler(this.SendButtonClick);
             // 
             // EmailShowTextBox
             // 
@@ -90,7 +92,7 @@
             // 
             // EmailGroupBox
             // 
-            this.EmailGroupBox.Controls.Add(this.richTextBox1);
+            this.EmailGroupBox.Controls.Add(this.BodyRichTextBox);
             this.EmailGroupBox.Controls.Add(this.SubjectTextBox);
             this.EmailGroupBox.Controls.Add(this.SenderTextBox);
             this.EmailGroupBox.Controls.Add(this.BodyLabel);
@@ -99,24 +101,32 @@
             this.EmailGroupBox.Controls.Add(this.SendButton);
             this.EmailGroupBox.Location = new System.Drawing.Point(223, 15);
             this.EmailGroupBox.Name = "EmailGroupBox";
-            this.EmailGroupBox.Size = new System.Drawing.Size(202, 331);
+            this.EmailGroupBox.Size = new System.Drawing.Size(377, 331);
             this.EmailGroupBox.TabIndex = 5;
             this.EmailGroupBox.TabStop = false;
             this.EmailGroupBox.Text = "Email Editor";
+            // 
+            // BodyRichTextBox
+            // 
+            this.BodyRichTextBox.Location = new System.Drawing.Point(58, 125);
+            this.BodyRichTextBox.Name = "BodyRichTextBox";
+            this.BodyRichTextBox.Size = new System.Drawing.Size(285, 200);
+            this.BodyRichTextBox.TabIndex = 6;
+            this.BodyRichTextBox.Text = "";
             // 
             // SubjectTextBox
             // 
             this.SubjectTextBox.Location = new System.Drawing.Point(58, 66);
             this.SubjectTextBox.Multiline = true;
             this.SubjectTextBox.Name = "SubjectTextBox";
-            this.SubjectTextBox.Size = new System.Drawing.Size(133, 20);
+            this.SubjectTextBox.Size = new System.Drawing.Size(197, 20);
             this.SubjectTextBox.TabIndex = 5;
             // 
             // SenderTextBox
             // 
             this.SenderTextBox.Location = new System.Drawing.Point(58, 29);
             this.SenderTextBox.Name = "SenderTextBox";
-            this.SenderTextBox.Size = new System.Drawing.Size(133, 20);
+            this.SenderTextBox.Size = new System.Drawing.Size(197, 20);
             this.SenderTextBox.TabIndex = 4;
             // 
             // BodyLabel
@@ -148,6 +158,7 @@
             // 
             // EmailSearchGroupBox
             // 
+            this.EmailSearchGroupBox.Controls.Add(this.OKDatebutton);
             this.EmailSearchGroupBox.Controls.Add(this.TextSearchTextBox);
             this.EmailSearchGroupBox.Controls.Add(this.TextLabel);
             this.EmailSearchGroupBox.Location = new System.Drawing.Point(6, 290);
@@ -200,19 +211,32 @@
             this.DateLabel.TabIndex = 0;
             this.DateLabel.Text = "Date";
             // 
-            // richTextBox1
+            // ReloadButton
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(58, 125);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(133, 200);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
+            this.ReloadButton.Location = new System.Drawing.Point(142, 191);
+            this.ReloadButton.Name = "ReloadButton";
+            this.ReloadButton.Size = new System.Drawing.Size(64, 23);
+            this.ReloadButton.TabIndex = 7;
+            this.ReloadButton.Text = "Reload";
+            this.ReloadButton.UseVisualStyleBackColor = true;
+            this.ReloadButton.Click += new System.EventHandler(this.ReloadButton_Click);
+            // 
+            // OKDatebutton
+            // 
+            this.OKDatebutton.Location = new System.Drawing.Point(168, 34);
+            this.OKDatebutton.Name = "OKDatebutton";
+            this.OKDatebutton.Size = new System.Drawing.Size(32, 23);
+            this.OKDatebutton.TabIndex = 8;
+            this.OKDatebutton.Text = "OK";
+            this.OKDatebutton.UseVisualStyleBackColor = true;
+            this.OKDatebutton.Click += new System.EventHandler(this.OKDatebutton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(612, 361);
+            this.Controls.Add(this.ReloadButton);
             this.Controls.Add(this.EmailSearchDateGroupBox);
             this.Controls.Add(this.EmailSearchGroupBox);
             this.Controls.Add(this.EmailGroupBox);
@@ -251,7 +275,9 @@
         private System.Windows.Forms.GroupBox EmailSearchDateGroupBox;
         private System.Windows.Forms.TextBox DateSearchTextBox;
         private System.Windows.Forms.Label DateLabel;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox BodyRichTextBox;
+        private System.Windows.Forms.Button ReloadButton;
+        private System.Windows.Forms.Button OKDatebutton;
     }
 }
 

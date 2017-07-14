@@ -27,7 +27,7 @@ namespace SaintSender
                 // the XOAUTH2 authentication mechanism.
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                client.Authenticate("suhooooly", "Europesbiggestowl");
+                client.Authenticate(SendEmailMIMEKIT.selfUserName, SendEmailMIMEKIT.selfKeyWord);
 
                 // The Inbox folder is always available on all IMAP servers...
                 var inbox = client.Inbox;
@@ -68,7 +68,7 @@ namespace SaintSender
                 // the XOAUTH2 authentication mechanism.
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                client.Authenticate("suhooooly", "Europesbiggestowl");
+                client.Authenticate(SendEmailMIMEKIT.selfUserName, SendEmailMIMEKIT.selfKeyWord);
 
                 // The Inbox folder is always available on all IMAP servers...
                 var inbox = client.Inbox;
@@ -116,7 +116,7 @@ namespace SaintSender
                 // the XOAUTH2 authentication mechanism.
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                client.Authenticate("suhooooly", "Europesbiggestowl");
+                client.Authenticate(SendEmailMIMEKIT.selfUserName, SendEmailMIMEKIT.selfKeyWord);
 
                 // Get the first personal namespace and list the toplevel folders under it.
                 var personal = client.GetFolder(client.PersonalNamespaces[0]);
@@ -160,6 +160,73 @@ namespace SaintSender
             }
         }
 
+        public static void ShowEmailsByFolderByDate(string folderName, string searchedString)
+        {
+            using (var client = new ImapClient())
+            {
+
+                // For demo-purposes, accept all SSL certificates
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                client.Connect("imap.gmail.com", 993, true);
+
+                // Note: since we don't have an OAuth2 token, disable
+                // the XOAUTH2 authentication mechanism.
+                client.AuthenticationMechanisms.Remove("XOAUTH2");
+
+                client.Authenticate(SendEmailMIMEKIT.selfUserName, SendEmailMIMEKIT.selfKeyWord);
+
+                // Get the first personal namespace and list the toplevel folders under it.
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+                IMailFolder searchedFolder;
+                DataManager.emailList.Clear();
+                foreach (var folder in personal.GetSubfolders(false))
+                {
+                    if (folder.Name.Equals(folderName))
+                    {
+                        searchedFolder = folder;
+                        searchedFolder.Open(FolderAccess.ReadOnly);
+
+                        // let's search for all messages received after Jan 12, 2013 with "MailKit" in the subject...
+                        var query = SearchQuery.DeliveredAfter(DateTime.Parse("2013-01-12"))
+                            .And(SearchQuery.SubjectContains(searchedString)).And(SearchQuery.Seen)
+                            .And(SearchQuery.BodyContains(searchedString)).And(SearchQuery.Seen);
+
+                        foreach (var uid in searchedFolder.Search(query))
+                        {
+                            var message = searchedFolder.GetMessage(uid);
+                            Console.WriteLine("[match] {0}: {1}", uid, message.Subject);
+                            Email tempEmail = new Email(message);
+                            DataManager.emailList.Add(tempEmail, null);
+                        }
+
+                      
+                    }
+                    foreach (var foldery in folder.GetSubfolders(false))
+                    {
+                        if (foldery.Name.Equals(folderName))
+                        {
+                            searchedFolder = foldery;
+                            searchedFolder.Open(FolderAccess.ReadOnly);
+
+                            // let's search for all messages received after Jan 12, 2013 with "MailKit" in the subject...
+                            var query = SearchQuery.DeliveredAfter(DateTime.Parse("2013-01-12"))
+                                .And(SearchQuery.SubjectContains(searchedString)).And(SearchQuery.Seen);
+
+                            foreach (var uid in searchedFolder.Search(query))
+                            {
+                                var message = searchedFolder.GetMessage(uid);
+                                Console.WriteLine("[match] {0}: {1}", uid, message.Subject);
+                                Email tempEmail = new Email(message);
+                                DataManager.emailList.Add(tempEmail, null);
+                            }
+                        }
+                    }
+                }
+                client.Disconnect(true);
+            }
+        }
+
         public static List<string> ShowFolder()
         {
             List<string> Messages = new List<string>();
@@ -176,7 +243,7 @@ namespace SaintSender
                 // the XOAUTH2 authentication mechanism.
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                client.Authenticate("suhooooly", "Europesbiggestowl");
+                client.Authenticate(SendEmailMIMEKIT.selfUserName, SendEmailMIMEKIT.selfKeyWord);
 
                 // Get the first personal namespace and list the toplevel folders under it.
                 var personal = client.GetFolder(client.PersonalNamespaces[0]);
