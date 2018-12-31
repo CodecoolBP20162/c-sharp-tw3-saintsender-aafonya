@@ -252,7 +252,7 @@ namespace SaintSender
             // Make button2's dialog result Cancel.
             CancelButton.DialogResult = DialogResult.Cancel;
             // Set the caption bar text of the form.   
-            DialogForm.Text = "Rename Dialog Box";
+            DialogForm.Text = "Registration";
 
             // Define the border style of the form to a dialog box.
             DialogForm.FormBorderStyle = FormBorderStyle.FixedDialog;
